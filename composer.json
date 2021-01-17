@@ -1,0 +1,26 @@
+{
+    "name": "stefanzweifel/alfred-emoji-pack",
+    "description": "Script to automatically generate up to date Emoji Snippet pack for Alfred.",
+    "type": "project",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Stefan Zweifel",
+            "email": "hello@stefanzweifel.io"
+        }
+    ],
+    "require": {
+        "php" : "^7.4|^8.0",
+        "ext-json": "*",
+        "symfony/console": "^4.2",
+        "ramsey/uuid": "^4.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Wnx\\AlfredEmojiPack\\": "src"
+        }
+    },
+    "scripts": {
+        "generate": "php ./app generate"
+    }
+}
