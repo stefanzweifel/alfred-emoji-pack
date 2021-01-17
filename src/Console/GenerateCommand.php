@@ -2,8 +2,12 @@
 
 namespace Wnx\AlfredEmojiPack\Console;
 
+use DirectoryIterator;
 use Ramsey\Uuid\Lazy\LazyUuidFromString;
 use Ramsey\Uuid\Uuid;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
+use SplFileInfo;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -11,9 +15,12 @@ use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
 use Wnx\Emoji\Emoji;
 use Wnx\Emoji\Parser;
+use ZipArchive;
 
 class GenerateCommand extends Command
 {
+    protected const PATH_TO_DIST_DIRECTORY = __DIR__ . '/../../dist/';
+
     /** @var string */
     protected const EMOJI_VERSION = '13.1';
 
@@ -44,35 +51,14 @@ class GenerateCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $encodedEmojiToNames = file_get_contents(__DIR__ . '/../../node_modules/gemoji/emoji-to-name.json');
-        $this->emojiToNames = json_decode($encodedEmojiToNames, true);
+        $this->clearDistDirectory();
+        
+        $this->createSnippets();
 
-
-
-        $encodedEmojis = file_get_contents(__DIR__. '/../../node_modules/gemoji/index.json');
-        $emojis = json_decode($encodedEmojis, true);
-
-        $snippetsCollection = [];
-
-        foreach($emojis as $emoji) {
-
-            $uuid = Uuid::uuid4();
-
-            $snippet = $this->generateSnippet($emoji, $uuid);
-            $filename = $this->generateFilename($emoji, $uuid);
-
-            $data = json_encode($snippet, JSON_PRETTY_PRINT);
-
-            $data = mb_convert_encoding($data, 'UTF-8', mb_detect_encoding($data));
-            // $data = iconv("ASCII", "UTF-8", $data);
-
-            file_put_contents(__DIR__ . "/../../dist/test1.json", utf8_encode(json_encode($snippet, JSON_PRETTY_PRINT)));
-            file_put_contents(__DIR__ . "/../../dist/{$filename}", $data);
-            return;
-        }
+        $this->createAlfredSnippetsArchive();
     }
 
-    public function generateSnippet(array $emoji, LazyUuidFromString $uuid)
+    public function generateSnippet(array $emoji, LazyUuidFromString $uuid): array
     {
         $emojiCharacter = $emoji['emoji'];
         $names = implode(' ', $emoji['names']);
@@ -81,7 +67,7 @@ class GenerateCommand extends Command
 
         return [
             'alfredsnippet' => [
-                'snippet' => utf8_encode($emojiCharacter),
+                'snippet' => $emojiCharacter,
                 'uuid' => $uuid->toString(),
                 'name' => "{$emojiCharacter} {$names}" . ($tags) ?: "- {$tags}",
                 'keyword' => ":{$description}:"
@@ -89,22 +75,80 @@ class GenerateCommand extends Command
         ];
     }
 
-    public function generateFilename(array $emoji, LazyUuidFromString $uuid)
+    public function generateFilename(array $emoji, LazyUuidFromString $uuid): string
     {
-        return 'test.json';
         return "{$emoji['emoji']} - {$uuid->toString()}.json";
     }
 
     /**
-     * @return false|string
+     * @param string $emojiCode
      */
-    protected function renderEmoji(string $emojiCode)
+    protected function renderEmoji(string $emojiCode): string
     {
         ob_start();
         echo "{$emojiCode}";
         $renderedEmoji = ob_get_contents();
         ob_end_clean();
         return $renderedEmoji;
+    }
+
+    protected function clearDistDirectory(): void
+    {
+        foreach (new DirectoryIterator(self::PATH_TO_DIST_DIRECTORY) as $fileInfo) {
+            if (! $fileInfo->isDot()) {
+                unlink($fileInfo->getPathname());
+            }
+        }
+    }
+
+    protected function createAlfredSnippetsArchive(): void
+    {
+        $rootPath = realpath(self::PATH_TO_DIST_DIRECTORY);
+        $zipArchive = new ZipArchive();
+        $zipArchive->open('Emoji Pack Neo.alfredsnippets', ZipArchive::CREATE | ZipArchive::OVERWRITE);
+
+        // Create recursive directory iterator
+        /** @var SplFileInfo[] $files */
+        $files = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($rootPath), RecursiveIteratorIterator::LEAVES_ONLY);
+
+        foreach ($files as $name => $file) {
+            // Skip directories (they would be added automatically)
+            if (! $file->isDir()) {
+                // Get real and relative path for current file
+                $filePath = $file->getRealPath();
+                $relativePath = substr($filePath, strlen($rootPath) + 1);
+
+                // Add current file to archive
+                $zipArchive->addFile($filePath, $relativePath);
+            }
+        }
+
+        // Zip archive will be created only after closing object
+        $zipArchive->close();
+    }
+
+    protected function createSnippets(): void
+    {
+        $encodedEmojiToNames = file_get_contents(__DIR__ . '/../../node_modules/gemoji/emoji-to-name.json');
+        $this->emojiToNames = json_decode($encodedEmojiToNames, true);
+
+
+        $encodedEmojis = file_get_contents(__DIR__ . '/../../node_modules/gemoji/index.json');
+        $emojis = json_decode($encodedEmojis, true);
+
+
+        // Create Snippets
+        foreach ($emojis as $emoji) {
+
+            $uuid = Uuid::uuid4();
+
+            $snippet = $this->generateSnippet($emoji, $uuid);
+            $filename = $this->generateFilename($emoji, $uuid);
+
+            $data = json_encode($snippet, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+
+            file_put_contents(__DIR__ . "/../../dist/{$filename}", $data);
+        }
     }
 
 }
