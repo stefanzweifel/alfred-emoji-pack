@@ -2,6 +2,8 @@
 
 PHP Script to generate Snippets for [Alfred](https://www.alfredapp.com/) with all the latest  available Emojis.
 
+![Integrate](https://github.com/stefanzweifel/alfred-emoji-pack/workflows/Integrate/badge.svg)
+
 ## Inspiration
 This project is heavily inspired by [califa/alfred-emoji-pack](https://github.com/califa/alfred-emoji-pack). (I helped adding a build step in [#1](https://github.com/califa/alfred-emoji-pack/pull/1)).
 However, I'm more comfortable in PHP than in JavaScript. That's how this project was born.
