@@ -1,10 +1,9 @@
 name: Build and Release
 
 on:
-    workflow_dispatch:
-    push:
-      tags:
-        - 'v*'
+  push:
+    tags:
+      - 'v*'
 
 jobs:
   build:
@@ -67,7 +66,7 @@ jobs:
           body: |
             A fresh Emoji Snippets pack has been built.
           draft: false
-          prerelease: true
+          prerelease: false
 
       - name: Upload Release Asset
         id: upload-release-asset
