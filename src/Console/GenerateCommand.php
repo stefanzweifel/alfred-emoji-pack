@@ -17,6 +17,8 @@ class GenerateCommand extends Command
 {
     protected const PATH_TO_BUILD_DIRECTORY = __DIR__ . '/../../build/';
 
+    protected const ARCHIVE_FILENAME = 'Emoji Pack.alfredsnippets';
+
     /** @var array[<string>, <string>] */
     protected array $emojiToNames;
 
@@ -118,7 +120,7 @@ class GenerateCommand extends Command
     {
         $rootPath = realpath(self::PATH_TO_BUILD_DIRECTORY);
         $zipArchive = new ZipArchive();
-        $zipArchive->open('Emoji Pack Neo.alfredsnippets', ZipArchive::CREATE | ZipArchive::OVERWRITE);
+        $zipArchive->open(self::ARCHIVE_FILENAME, ZipArchive::CREATE | ZipArchive::OVERWRITE);
 
         /** @var SplFileInfo[] $files */
         $files = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($rootPath), RecursiveIteratorIterator::LEAVES_ONLY);
