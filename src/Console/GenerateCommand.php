@@ -29,7 +29,7 @@ class GenerateCommand extends Command
             ->setDescription('Generate Emoji Snippets for Alfred.app');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->clearBuildDirectory();
 
@@ -41,6 +41,8 @@ class GenerateCommand extends Command
 
         $this->clearBuildDirectory();
         $output->writeln('<info>✓ Done</info>');
+
+        return 0;
     }
 
     protected function clearBuildDirectory(): void
