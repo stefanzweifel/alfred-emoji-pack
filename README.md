@@ -6,7 +6,7 @@ PHP Script to generate Snippets for [Alfred](https://www.alfredapp.com/) with al
 This project is heavily inspired by [califa/alfred-emoji-pack](https://github.com/califa/alfred-emoji-pack). (I helped adding a build step in [#1](https://github.com/califa/alfred-emoji-pack/pull/1)).
 However, I'm more comfortable in PHP than in JavaScript. That's how this project was born.
 
-My goal with this project is to automatically generate an always up to date Emoji pack for Alfred. A future version will use the [Unicode](https://unicode.org) website as it's source for the available emojis.
+My goal with this project is to automatically generate an always up-to-date Emoji pack for Alfred. A future version will use the [Unicode](https://unicode.org) website as its source for the available emojis.
 
 ## Usage
 Download the file "Emoji Pack.alfredsnippets" from the latest [release](https://github.com/stefanzweifel/alfred-emoji-pack/releases) and open the file in Alfred.
