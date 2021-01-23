@@ -13,7 +13,7 @@
         "php" : "^7.4|^8.0",
         "ext-json": "*",
         "ext-zip": "*",
-        "symfony/console": "^4.2",
+        "symfony/console": "^5.2",
         "ramsey/uuid": "^4.1"
     },
     "require-dev": {
