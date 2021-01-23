@@ -1,6 +1,6 @@
 {
     "name": "stefanzweifel/alfred-emoji-pack",
-    "description": "Script to automatically generate up to date Emoji Snippet pack for Alfred.",
+    "description": "PHP Script to generate Snippets for Alfred with all available Emojis.",
     "type": "project",
     "license": "MIT",
     "authors": [
@@ -16,12 +16,16 @@
         "symfony/console": "^4.2",
         "ramsey/uuid": "^4.1"
     },
+    "require-dev": {
+        "friendsofphp/php-cs-fixer": "^2.18"
+    },
     "autoload": {
         "psr-4": {
             "Wnx\\AlfredEmojiPack\\": "src"
         }
     },
     "scripts": {
-        "generate": "php ./app generate"
+        "generate": "php ./app generate",
+        "format": "php-cs-fixer fix"
     }
 }
