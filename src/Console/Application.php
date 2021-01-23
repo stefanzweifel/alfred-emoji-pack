@@ -8,7 +8,7 @@ class Application extends ConsoleApplication
 {
     public function __construct()
     {
-        parent::__construct('Wnx\Emoji package generator', '1.0.0');
+        parent::__construct('Alfred Emoji Pack Generator', '1.0.0');
 
         $command = new GenerateCommand();
         $this->add($command);

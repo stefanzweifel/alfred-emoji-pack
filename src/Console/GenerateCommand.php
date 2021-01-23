@@ -15,28 +15,74 @@ use ZipArchive;
 
 class GenerateCommand extends Command
 {
-    protected const PATH_TO_DIST_DIRECTORY = __DIR__ . '/../../dist/';
+    protected const PATH_TO_BUILD_DIRECTORY = __DIR__ . '/../../build/';
 
-    /** @var array[] */
-    protected $emojiToNames;
+    /** @var array[<string>, <string>] */
+    protected array $emojiToNames;
 
     protected function configure()
     {
         $this
             ->setName('generate')
-            ->setDescription('Generate Alfred Snippet Pack with Emojis.');
+            ->setDescription('Generate Emoji Snippets for Alfred.app');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->clearDistDirectory();
+        $this->clearBuildDirectory();
 
+        $output->writeln('<info>• Creating Snippets …</info>');
         $this->createSnippets();
 
-        $this->createAlfredSnippetsArchive();
+        $output->writeln('<info>• Creating Achive …</info>');
+        $this->createArchive();
+
+        $this->clearBuildDirectory();
+        $output->writeln('<info>✓ Done</info>');
     }
 
-    public function generateSnippet(array $emoji, LazyUuidFromString $uuid): array
+    protected function clearBuildDirectory(): void
+    {
+        $buildDirectory = new DirectoryIterator(self::PATH_TO_BUILD_DIRECTORY);
+
+        /** @var DirectoryIterator $directoryIterator */
+        foreach ($buildDirectory as $directoryIterator) {
+            if ($directoryIterator->isDot() === false && $directoryIterator->getFileInfo()->getFilename() !== '.gitkeep') {
+                unlink($directoryIterator->getPathname());
+            }
+        }
+    }
+
+    /**
+     * Create single Snippet files based on an array of Emojis
+     * @return void
+     */
+    protected function createSnippets(): void
+    {
+        $this->emojiToNames = json_decode(file_get_contents(__DIR__ . '/../../node_modules/gemoji/emoji-to-name.json'), true);
+
+        foreach ($this->getEmojis() as $emoji) {
+            $uuid = Uuid::uuid4();
+
+            $snippet = $this->generateSnippet($emoji, $uuid);
+            $filename = $this->generateFilename($emoji, $uuid);
+
+            $data = json_encode($snippet, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+
+            file_put_contents(self::PATH_TO_BUILD_DIRECTORY . $filename, $data);
+        }
+    }
+
+    /**
+     * Get an Array of Emojis which should be turned into Snippets
+     * @return array
+     */
+    protected function getEmojis(): array
+    {
+        return json_decode(file_get_contents(__DIR__ . '/../../node_modules/gemoji/index.json'), true);
+    }
+
+    protected function generateSnippet(array $emoji, LazyUuidFromString $uuid): array
     {
         $emojiCharacter = $emoji['emoji'];
         $names = implode(' ', $emoji['names']);
@@ -53,35 +99,24 @@ class GenerateCommand extends Command
         ];
     }
 
-    public function generateFilename(array $emoji, LazyUuidFromString $uuid): string
+    /**
+     * Create unique Filename for given Emoji
+     *
+     * @param array $emoji
+     * @param LazyUuidFromString $uuid
+     * @return string
+     */
+    protected function generateFilename(array $emoji, LazyUuidFromString $uuid): string
     {
         return "{$emoji['emoji']} - {$uuid->toString()}.json";
     }
 
     /**
-     * @param string $emojiCode
+     * Create Snippet Archive
      */
-    protected function renderEmoji(string $emojiCode): string
+    protected function createArchive(): void
     {
-        ob_start();
-        echo "{$emojiCode}";
-        $renderedEmoji = ob_get_contents();
-        ob_end_clean();
-        return $renderedEmoji;
-    }
-
-    protected function clearDistDirectory(): void
-    {
-        foreach (new DirectoryIterator(self::PATH_TO_DIST_DIRECTORY) as $fileInfo) {
-            if (! $fileInfo->isDot()) {
-                unlink($fileInfo->getPathname());
-            }
-        }
-    }
-
-    protected function createAlfredSnippetsArchive(): void
-    {
-        $rootPath = realpath(self::PATH_TO_DIST_DIRECTORY);
+        $rootPath = realpath(self::PATH_TO_BUILD_DIRECTORY);
         $zipArchive = new ZipArchive();
         $zipArchive->open('Emoji Pack Neo.alfredsnippets', ZipArchive::CREATE | ZipArchive::OVERWRITE);
 
@@ -99,27 +134,4 @@ class GenerateCommand extends Command
 
         $zipArchive->close();
     }
-
-    protected function createSnippets(): void
-    {
-        $encodedEmojiToNames = file_get_contents(__DIR__ . '/../../node_modules/gemoji/emoji-to-name.json');
-        $this->emojiToNames = json_decode($encodedEmojiToNames, true);
-
-        $encodedEmojis = file_get_contents(__DIR__ . '/../../node_modules/gemoji/index.json');
-        $emojis = json_decode($encodedEmojis, true);
-
-
-        // Create Snippets
-        foreach ($emojis as $emoji) {
-            $uuid = Uuid::uuid4();
-
-            $snippet = $this->generateSnippet($emoji, $uuid);
-            $filename = $this->generateFilename($emoji, $uuid);
-
-            $data = json_encode($snippet, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
-
-            file_put_contents(__DIR__ . "/../../dist/{$filename}", $data);
-        }
-    }
-
 }
