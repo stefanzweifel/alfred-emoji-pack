@@ -77,6 +77,8 @@ class GenerateCommand extends Command
 
             file_put_contents(self::PATH_TO_BUILD_DIRECTORY . $filename, $data);
         }
+
+        copy(__DIR__ . '/../../assets/icon.png', self::PATH_TO_BUILD_DIRECTORY . 'icon.png');
     }
 
     /**
