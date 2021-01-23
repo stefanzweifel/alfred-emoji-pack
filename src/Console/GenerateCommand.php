@@ -3,6 +3,7 @@
 namespace Wnx\AlfredEmojiPack\Console;
 
 use DirectoryIterator;
+use JetBrains\PhpStorm\Pure;
 use Ramsey\Uuid\Lazy\LazyUuidFromString;
 use Ramsey\Uuid\Uuid;
 use RecursiveDirectoryIterator;
@@ -11,6 +12,7 @@ use SplFileInfo;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Wnx\AlfredEmojiPack\DTOs\Snippet;
 use ZipArchive;
 
 class GenerateCommand extends Command
@@ -93,14 +95,14 @@ class GenerateCommand extends Command
         $tags = implode(' ', $emoji['tags']);
         $description = $this->emojiToNames[$emojiCharacter];
 
-        return [
-            'alfredsnippet' => [
-                'snippet' => $emojiCharacter,
-                'uuid' => $uuid->toString(),
-                'name' => "{$emojiCharacter} {$names}" . ($tags) ?: "- {$tags}",
-                'keyword' => ":{$description}:",
-            ],
-        ];
+        $snippet = new Snippet(
+            snippet: $emojiCharacter,
+            uuid: $uuid->toString(),
+            name: "{$emojiCharacter} {$names}" . ($tags) ?: "- {$tags}",
+            keyword: ":{$description}:",
+        );
+
+        return $snippet->toArray();
     }
 
     /**
