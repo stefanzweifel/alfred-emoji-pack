@@ -1,6 +1,6 @@
 # Alfred Emoji Pack
 
-PHP Script to generate Snippets for [Alfred](https://www.alfredapp.com/) with all the latest  available Emojis.
+PHP Script to generate Snippets for [Alfred](https://www.alfredapp.com/) with all the latest available Emojis. (Currently includes up to Emoji 13.0 characters)
 
 ![Integrate](https://github.com/stefanzweifel/alfred-emoji-pack/workflows/Integrate/badge.svg)
 
@@ -14,24 +14,30 @@ My goal with this project is to automatically generate an always up-to-date Emoj
 Download the file "Emoji Pack.alfredsnippets" from the latest [release](https://github.com/stefanzweifel/alfred-emoji-pack/releases) and open the file in Alfred.
 
 ## When are new Emojis added?
-> TBD
+The project currently depends on [wooorm/gemoji](https://github.com/wooorm/gemoji), which itself depends on [github/gemoji](https://github.com/github/gemoji). Therefore new Emojis are added whenever `wooorm/gemoji` receives a new release.
+
+As the update cycle for both of the packages is quite slow, I would like to skip them entirely. I'm already working on a project which automatically creates a library of all available emojis based on the [Unicode](https://unicode.org/Public/emoji/) website.
+As soon as that new package is finished this project will be updated.
 
 ## Local Development
 
-> TBD
+The project requires PHP 8, Nodejs and `yarn`.
 
-1. Clone repo
+1. Clone the repository
 2. Install NPM dependencies with `yarn install`
 3. Install PHP dependencies with `composer install`
 4. Do your thing ✨
 
 ## Generate New Pack
 
-> TBD
+To generate a new pack or build, the NPM and PHP dependencies need to be installed.
+Then run the following command in your terminal.
 
-1. Run `php app generate`
-2. Use "Emoji Pack.alfredsnippets"
+```
+php app generate
+```
 
+The generate pack is located in the root of the project as "Emoji Pack.alfredsnippets".
 
 ## Versioning
 
