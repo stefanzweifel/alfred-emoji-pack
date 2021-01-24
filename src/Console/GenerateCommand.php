@@ -68,7 +68,7 @@ class GenerateCommand extends Command
         $this->emojiToNames = json_decode(file_get_contents(__DIR__ . '/../../node_modules/gemoji/emoji-to-name.json'), true);
 
         foreach ($this->getEmojis() as $emoji) {
-            $uuid = Uuid::uuid4();
+            $uuid = sha1(json_encode($emoji));
 
             $snippet = $this->generateSnippet($emoji, $uuid);
             $filename = $this->generateFilename($emoji, $uuid);
@@ -90,33 +90,31 @@ class GenerateCommand extends Command
         return json_decode(file_get_contents(__DIR__ . '/../../node_modules/gemoji/index.json'), true);
     }
 
-    protected function generateSnippet(array $emoji, LazyUuidFromString $uuid): array
+    protected function generateSnippet(array $emoji, string $uuid): array
     {
         $emojiCharacter = $emoji['emoji'];
         $names = implode(' ', $emoji['names']);
         $tags = implode(' ', $emoji['tags']);
         $description = $this->emojiToNames[$emojiCharacter];
 
-        $snippet = new Snippet(
+        return (new Snippet(
             snippet: $emojiCharacter,
-            uuid: $uuid->toString(),
+            uuid: $uuid,
             name: "{$emojiCharacter} {$names}" . ($tags) ?: "- {$tags}",
             keyword: ":{$description}:",
-        );
-
-        return $snippet->toArray();
+        ))->toArray();
     }
 
     /**
      * Create unique Filename for given Emoji
      *
      * @param array $emoji
-     * @param LazyUuidFromString $uuid
+     * @param string $uuid
      * @return string
      */
-    protected function generateFilename(array $emoji, LazyUuidFromString $uuid): string
+    protected function generateFilename(array $emoji, string $uuid): string
     {
-        return "{$emoji['emoji']} - {$uuid->toString()}.json";
+        return "{$emoji['emoji']} - {$uuid}.json";
     }
 
     /**
