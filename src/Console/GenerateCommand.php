@@ -97,10 +97,12 @@ class GenerateCommand extends Command
         $tags = implode(' ', $emoji['tags']);
         $description = $this->emojiToNames[$emojiCharacter];
 
+        $names = str_replace('_', ' ', $names);
+
         return (new Snippet(
             snippet: $emojiCharacter,
             uuid: $uuid,
-            name: "{$emojiCharacter} {$names}" . ($tags) ?: "- {$tags}",
+            name: "{$emojiCharacter} {$names} {$tags}",
             keyword: ":{$description}:",
         ))->toArray();
     }
