@@ -3,9 +3,6 @@
 namespace Wnx\AlfredEmojiPack\Console;
 
 use DirectoryIterator;
-use JetBrains\PhpStorm\Pure;
-use Ramsey\Uuid\Lazy\LazyUuidFromString;
-use Ramsey\Uuid\Uuid;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use SplFileInfo;
@@ -97,10 +94,12 @@ class GenerateCommand extends Command
         $tags = implode(' ', $emoji['tags']);
         $description = $this->emojiToNames[$emojiCharacter];
 
+        $names = str_replace('_', ' ', $names);
+
         return (new Snippet(
             snippet: $emojiCharacter,
             uuid: $uuid,
-            name: "{$emojiCharacter} {$names}" . ($tags) ?: "- {$tags}",
+            name: "{$emojiCharacter} {$names} {$tags}",
             keyword: ":{$description}:",
         ))->toArray();
     }
