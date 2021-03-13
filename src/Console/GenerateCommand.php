@@ -3,9 +3,6 @@
 namespace Wnx\AlfredEmojiPack\Console;
 
 use DirectoryIterator;
-use JetBrains\PhpStorm\Pure;
-use Ramsey\Uuid\Lazy\LazyUuidFromString;
-use Ramsey\Uuid\Uuid;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use SplFileInfo;
