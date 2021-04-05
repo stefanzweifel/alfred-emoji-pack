@@ -1,6 +1,6 @@
 # Alfred Emoji Pack
 
-PHP Script to generate Snippets for [Alfred](https://www.alfredapp.com/) with all the latest available Emojis. (Currently includes up to Emoji 13.0 characters)
+PHP Script to generate Snippets for [Alfred](https://www.alfredapp.com/) with all the latest available Emojis. (Currently includes up to Emoji 13.1 characters)
 
 ![Integrate](https://github.com/stefanzweifel/alfred-emoji-pack/workflows/Integrate/badge.svg)
 
@@ -14,30 +14,31 @@ My goal with this project is to automatically generate an always up-to-date Emoj
 Download the file "Emoji Pack.alfredsnippets" from the latest [release](https://github.com/stefanzweifel/alfred-emoji-pack/releases) and open the file in Alfred.
 
 ## When are new Emojis added?
-The project currently depends on [wooorm/gemoji](https://github.com/wooorm/gemoji), which itself depends on [github/gemoji](https://github.com/github/gemoji). Therefore new Emojis are added whenever `wooorm/gemoji` receives a new release.
+The project currently depends on [github/gemoji](https://github.com/github/gemoji). New Emojis are added whenever `github/gemoji` receives a new update.
 
-As the update cycle for both of the packages is quite slow, I would like to skip them entirely. I'm already working on a project which automatically creates a library of all available emojis based on the [Unicode](https://unicode.org/Public/emoji/) website.
-As soon as that new package is finished this project will be updated.
+The update cycle for `github/gemoji` is quite slow, so I would like to skip it entirely. I've started working on a project ([stefanzweifel/php-emojis](https://github.com/stefanzweifel/php-emojis
+)) which creates a library of PHP classes based on the available emojis on the [Unicode](https://unicode.org/Public/emoji/) website. 
+
+As soon as `stefanzweifel/php-emojis` reaches a stable version, this project will be updated to use that library.
 
 ## Local Development
 
-The project requires PHP 8, Nodejs and `yarn`.
+The project requires PHP 8,.
 
 1. Clone the repository
-2. Install NPM dependencies with `yarn install`
-3. Install PHP dependencies with `composer install`
-4. Do your thing ✨
+2. Install PHP dependencies with `composer install`
+3. Do your thing ✨
 
 ## Generate New Pack
 
-To generate a new pack or build, the NPM and PHP dependencies need to be installed.
+To generate a new pack or build, the PHP dependencies need to be installed.
 Then run the following command in your terminal.
 
 ```
 php app generate
 ```
 
-The generate pack is located in the root of the project as "Emoji Pack.alfredsnippets".
+The generated pack is located in the root of the project as "Emoji Pack.alfredsnippets".
 
 ## Versioning
 
