@@ -13,7 +13,8 @@
         "php" : "^8.0",
         "ext-json": "*",
         "ext-zip": "*",
-        "symfony/console": "^5.2"
+        "symfony/console": "^5.2",
+        "guzzlehttp/guzzle": "^7.3"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^2.18"
@@ -24,6 +25,7 @@
         }
     },
     "scripts": {
+        "build": "@generate",
         "generate": "php ./app generate",
         "format": "php-cs-fixer fix"
     }
