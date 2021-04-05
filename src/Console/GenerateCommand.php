@@ -61,7 +61,6 @@ class GenerateCommand extends Command
     protected function createSnippets(): void
     {
         foreach ($this->fetchEmojis() as $emoji) {
-
             $uuid = sha1(json_encode($emoji));
 
             $snippet = $this->generateSnippet($emoji, $uuid);
