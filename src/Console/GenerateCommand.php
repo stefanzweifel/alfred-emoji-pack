@@ -3,6 +3,7 @@
 namespace Wnx\AlfredEmojiPack\Console;
 
 use DirectoryIterator;
+use GuzzleHttp\Client;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use SplFileInfo;
@@ -17,9 +18,6 @@ class GenerateCommand extends Command
     protected const PATH_TO_BUILD_DIRECTORY = __DIR__ . '/../../build/';
 
     protected const ARCHIVE_FILENAME = 'Emoji Pack.alfredsnippets';
-
-    /** @var array[<string>, <string>] */
-    protected array $emojiToNames;
 
     protected function configure()
     {
@@ -62,9 +60,8 @@ class GenerateCommand extends Command
      */
     protected function createSnippets(): void
     {
-        $this->emojiToNames = json_decode(file_get_contents(__DIR__ . '/../../node_modules/gemoji/emoji-to-name.json'), true);
+        foreach ($this->fetchEmojis() as $emoji) {
 
-        foreach ($this->getEmojis() as $emoji) {
             $uuid = sha1(json_encode($emoji));
 
             $snippet = $this->generateSnippet($emoji, $uuid);
@@ -82,17 +79,25 @@ class GenerateCommand extends Command
      * Get an Array of Emojis which should be turned into Snippets
      * @return array
      */
-    protected function getEmojis(): array
+    protected function fetchEmojis(): array
     {
-        return json_decode(file_get_contents(__DIR__ . '/../../node_modules/gemoji/index.json'), true);
+        $client = new Client();
+
+        $response = $client->get('https://api.github.com/repos/github/gemoji/contents/db/emoji.json', [
+            'headers' => [
+                'Accept' => 'application/vnd.github.v3.raw',
+            ],
+        ]);
+
+        return json_decode($response->getBody()->getContents(), true);
     }
 
     protected function generateSnippet(array $emoji, string $uuid): array
     {
         $emojiCharacter = $emoji['emoji'];
-        $names = implode(' ', $emoji['names']);
+        $names = implode(' ', $emoji['aliases']);
         $tags = implode(' ', $emoji['tags']);
-        $description = $this->emojiToNames[$emojiCharacter];
+        $description = $emoji['description'];
 
         $names = str_replace('_', ' ', $names);
 
