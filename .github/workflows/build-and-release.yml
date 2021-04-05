@@ -15,21 +15,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Cache node modules
-        uses: actions/cache@v2.1.4
-        id: cache
-        with:
-          path: node_modules
-          key: ${{ runner.os }}-node-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
-
-      - name: Install
-        if: steps.cache.outputs.cache-hit != 'true'
-        run: yarn install
-        env:
-          CI: true
-
       - name: Get Composer Cache Directory
         id: composer-cache
         run: |
