@@ -5,10 +5,10 @@ namespace Wnx\AlfredEmojiPack\DTOs;
 class Snippet
 {
     public function __construct(
-        private string $snippet,
-        private string $uuid,
-        private string $name,
-        private string $keyword,
+        private readonly string $snippet,
+        private readonly string $uuid,
+        private readonly string $name,
+        private readonly string $keyword,
     ) {
     }
 

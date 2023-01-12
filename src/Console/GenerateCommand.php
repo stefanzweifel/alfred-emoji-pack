@@ -88,7 +88,7 @@ class GenerateCommand extends Command
             ],
         ]);
 
-        return json_decode($response->getBody()->getContents(), true);
+        return json_decode($response->getBody()->getContents(), true, 512, JSON_THROW_ON_ERROR);
     }
 
     protected function generateSnippet(array $emoji, string $uuid): array
