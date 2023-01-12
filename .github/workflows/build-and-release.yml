@@ -8,34 +8,18 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
     name: Build and Release
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Get Composer Cache Directory
-        id: composer-cache
-        run: |
-          echo "::set-output name=dir::$(composer config cache-files-dir)"
-
-      - uses: actions/cache@v3.2.2
-        with:
-          path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-composer-
-
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: 8.0
+          php-version: 8.1
           extension: zip, json
 
-      - name: Install dependencies
-        if: steps.composer-cache.outputs.cache-hit != 'true'
-        run: composer install --prefer-dist --no-interaction --no-suggest
+      - uses: ramsey/composer-install@v2
 
       - name: Generate new Emoji Pack
         run: php app generate
@@ -44,7 +28,6 @@ jobs:
         id: release_drafter
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
 
       - name: Create Release
         id: create_release
