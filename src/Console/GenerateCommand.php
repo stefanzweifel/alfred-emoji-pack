@@ -71,6 +71,19 @@ class GenerateCommand extends Command
             file_put_contents(self::PATH_TO_BUILD_DIRECTORY . $filename, $data);
         }
 
+        file_put_contents(self::PATH_TO_BUILD_DIRECTORY . 'info.plist', <<<XML
+        <?xml version="1.0" encoding="UTF-8"?>
+        <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+        <plist version="1.0">
+        <dict>
+            <key>snippetkeywordprefix</key>
+            <string>:</string>
+            <key>snippetkeywordsuffix</key>
+            <string>:</string>
+        </dict>
+        </plist>
+        XML);
+
         copy(__DIR__ . '/../../assets/icon.png', self::PATH_TO_BUILD_DIRECTORY . 'icon.png');
     }
 
@@ -104,7 +117,7 @@ class GenerateCommand extends Command
             snippet: $emojiCharacter,
             uuid: $uuid,
             name: "{$emojiCharacter} {$names} {$tags}",
-            keyword: ":{$description}:",
+            keyword: $description,
         ))->toArray();
     }
 
