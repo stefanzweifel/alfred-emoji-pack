@@ -104,7 +104,7 @@ class GenerateCommand extends Command
             snippet: $emojiCharacter,
             uuid: $uuid,
             name: "{$emojiCharacter} {$names} {$tags}",
-            keyword: ":{$description}:",
+            keyword: $description,
         ))->toArray();
     }
 
