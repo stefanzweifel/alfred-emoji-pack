@@ -22,7 +22,7 @@ jobs:
           php-version: 8.1
           extensions: zip, json
 
-      - uses: ramsey/composer-install@v2
+      - uses: ramsey/composer-install@v3
 
       - name: Generate new Emoji Pack
         run: php app generate
