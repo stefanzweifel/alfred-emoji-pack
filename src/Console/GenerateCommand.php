@@ -95,7 +95,10 @@ class GenerateCommand extends Command
     {
         $client = new Client();
 
-        $response = $client->get('https://api.github.com/repos/github/gemoji/contents/db/emoji.json', [
+        $originalUrl = 'https://api.github.com/repos/github/gemoji/contents/db/emoji.json';
+        $url = 'https://api.github.com/repos/rhysd/gemoji/contents/db/emoji.json?ref=unicode-16.0';
+
+        $response = $client->get($url, [
             'headers' => [
                 'Accept' => 'application/vnd.github.v3.raw',
             ],
