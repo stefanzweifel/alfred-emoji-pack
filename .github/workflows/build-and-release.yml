@@ -24,7 +24,7 @@ jobs:
       - name: Generate new Emoji Pack
         run: php app generate
 
-      - uses: release-drafter/release-drafter@v6
+      - uses: release-drafter/release-drafter@v7
         id: release_drafter
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
